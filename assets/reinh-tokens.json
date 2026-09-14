@@ -1,0 +1,136 @@
+{
+  "BRAND": {
+    "version": "1.0",
+    "direction": "Cobalt / Checkpoint",
+    "signature": "REINH",
+    "role": "AI Automation & Backend Engineer",
+    "real_name": null,
+    "github": "https://github.com/reinh2",
+    "telegram": null,
+    "primary_mode": "light"
+  },
+  "COLORS": {
+    "light": {
+      "background": "#F7F8FA",
+      "surface": "#FFFFFF",
+      "text": "#15181E",
+      "muted": "#616975",
+      "border": "#D8DDE5",
+      "accent": "#2457E7",
+      "on_accent": "#FFFFFF"
+    },
+    "dark": {
+      "background": "#101318",
+      "surface": "#191E26",
+      "text": "#F3F5F8",
+      "muted": "#A5AEBD",
+      "border": "#343D4B",
+      "accent": "#82A5FF",
+      "on_accent": "#101318"
+    }
+  },
+  "TYPOGRAPHY": {
+    "sans": "Inter",
+    "sans_weights": [
+      400,
+      500,
+      600
+    ],
+    "mono": "JetBrains Mono",
+    "mono_weight": 400,
+    "languages": [
+      "ru",
+      "en"
+    ],
+    "code_ligatures": false
+  },
+  "SHAPES": {
+    "unit": "css_px",
+    "radius_control": 8,
+    "radius_media": 12,
+    "border": 1,
+    "connector": 2,
+    "checkpoint": 8,
+    "signature_path": {
+      "horizontal_em": 0.9,
+      "drop_em": 0.25,
+      "stroke_em": 0.06,
+      "square_em": 0.18,
+      "gap_em": 0.35
+    }
+  },
+  "LAYOUT": {
+    "spacing": [
+      8,
+      16,
+      24,
+      32,
+      48,
+      64,
+      96
+    ],
+    "desktop": {
+      "columns": 12,
+      "gap": 24,
+      "max_width": 1200
+    },
+    "mobile": {
+      "columns": 4,
+      "gap": 16,
+      "margin": 24
+    },
+    "cover": {
+      "width": 1600,
+      "height": 900,
+      "margin": 64,
+      "gap": 24
+    },
+    "telegram": {
+      "width": 1200,
+      "height": 900,
+      "margin": 48
+    }
+  },
+  "GRAPHICS": {
+    "devices": [
+      "orthogonal_path",
+      "square_checkpoint",
+      "product_frame"
+    ],
+    "accent_area_outside_ui": "3-8%",
+    "overview_nodes_max": 6,
+    "screenshot_area": "55-70%",
+    "perspective": false,
+    "decorative_grid": false,
+    "screenshot_recolor": false,
+    "mascot": false,
+    "checkpoint_motif": {
+      "max_per_composition": 1,
+      "bends": 1,
+      "angle": 90,
+      "anchor": "key_label",
+      "wordmark_route_when_body_motif": false
+    }
+  },
+  "STYLE": [
+    "precise",
+    "restrained",
+    "human",
+    "technical",
+    "product_first"
+  ],
+  "AVOID": [
+    "fake_ui",
+    "invented_claims",
+    "neon",
+    "robots",
+    "ai_brains",
+    "cyberpunk",
+    "matrix_rain",
+    "holograms",
+    "glassmorphism",
+    "crypto",
+    "gaming",
+    "decorative_complexity"
+  ]
+}
