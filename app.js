@@ -36,16 +36,20 @@ for(const box of document.querySelectorAll('[data-compare]')){
  });
  select(tabs[0]);
 }
-// Case motion video: plays muted only while on screen; respects reduced motion and a manual pause.
-const motion=document.querySelector('.motion-video');
-if(motion && !window.matchMedia('(prefers-reduced-motion: reduce)').matches && 'IntersectionObserver' in window){
- let userPaused=false, ours=false;
- motion.addEventListener('pause',()=>{if(!ours)userPaused=true;ours=false;});
- motion.addEventListener('play',()=>{userPaused=false;});
- new IntersectionObserver(entries=>{for(const e of entries){
-  if(e.isIntersecting){if(!userPaused)motion.play().catch(()=>{});}
-  else if(!motion.paused){ours=true;motion.pause();}
- }},{threshold:.4}).observe(motion);
+// Case motion videos: each plays muted only while on screen; respects reduced motion and a manual pause.
+if(!window.matchMedia('(prefers-reduced-motion: reduce)').matches && 'IntersectionObserver' in window){
+ const state=new WeakMap();
+ const watcher=new IntersectionObserver(entries=>{for(const e of entries){
+  const v=e.target, s=state.get(v);
+  if(e.isIntersecting){if(!s.userPaused)v.play().catch(()=>{});}
+  else if(!v.paused){s.ours=true;v.pause();}
+ }},{threshold:.4});
+ for(const v of document.querySelectorAll('.motion-video')){
+  const s={userPaused:false,ours:false}; state.set(v,s);
+  v.addEventListener('pause',()=>{if(!s.ours)s.userPaused=true;s.ours=false;});
+  v.addEventListener('play',()=>{s.userPaused=false;});
+  watcher.observe(v);
+ }
 }
 // Keep the corresponding section when switching language. Real links work without JS.
 for(const link of document.querySelectorAll('.languages a'))link.addEventListener('click',()=>{link.hash=location.hash;});

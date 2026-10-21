@@ -116,3 +116,13 @@ html:not(.js) .compare-panel + .compare-panel { margin-top: 48px; }
   .channel-header { display: none; }
   .lightbox.is-portrait .lightbox-scroll img { max-width: 100%; }
 }
+
+/* Motion overviews in the project cases */
+.case-motion { margin: 0; min-width: 0; }
+.case-motion video, .lead-media .motion-video { display: block; width: 100%; aspect-ratio: 16 / 9; border-radius: 12px; background: #101318; }
+.case-motion figcaption { margin-top: 12px; }
+.video-label a { color: var(--text); text-decoration: underline; text-underline-offset: 4px; }
+.docmind-feature { grid-template-columns: minmax(0,.85fr) minmax(0,1.5fr); }
+@media(max-width:600px) {
+  .invoice-feature .case-motion { grid-row: 2; }
+}
