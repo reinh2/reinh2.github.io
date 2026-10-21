@@ -251,8 +251,9 @@ footer .footer-links { gap: 20px; }
 @keyframes checkpoint-extend { from { width: 24px; } to { width: 100%; } }
 .enter-once { animation: block-enter 450ms ease-out both; }
 @keyframes block-enter { from { opacity: .35; transform: translateY(12px); } to { opacity: 1; transform: none; } }
-.text-link span, .button span { display: inline-block; transition: transform 180ms ease; }
-.text-link:hover span, .button:hover span { transform: translate(2px,-2px); }
+.text-link > .ic, .button > .ic, .header-contact > .ic { transition: transform 180ms ease; }
+.text-link:hover > .ic-out, .button:hover > .ic-out, .header-contact:hover > .ic-out { transform: translate(2px,-2px); }
+.text-link:hover > .ic-go, .button:hover > .ic-go { transform: translateX(3px); }
 @media(max-width:900px) {
   .hero h1 { font-size: 52px; }
 }
