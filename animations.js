@@ -52,7 +52,7 @@
  const below = el => el.getBoundingClientRect().top > innerHeight * .92;
  const groups = [
   ['.featured-case .case-story > *', 'up'], ['.split-copy > :not(.process-line)', 'up'], ['.lead-proof', 'up'], ['.case-status', 'up'],
-  ['.lead-media', 'media'], ['.case-motion', 'media'], ['.video-label', 'up'],
+  ['.lead-media', 'media'], ['.case-motion', 'media'], ['.compare', 'media'], ['.video-label', 'up'], ['.client-points > div', 'up'],
   ['.service-list article', 'up'], ['.about-facts > div', 'up'], ['.process-list li', 'up'], ['.contact-copy > *', 'up'], ['.proof-strip', 'up'],
  ];
  const io = new IntersectionObserver(entries => {
