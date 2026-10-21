@@ -12,12 +12,15 @@ const say=document.documentElement.lang==='ru'
  ?{play:'Воспроизвести',pause:'Пауза',soundOn:'Включить звук',soundOff:'Выключить звук',full:'Во весь экран'}
  :{play:'Play',pause:'Pause',soundOn:'Turn sound on',soundOff:'Turn sound off',full:'Full screen'};
 const control=(kind,label)=>{const b=document.createElement('button');b.type='button';b.className='vbtn vbtn-'+kind;b.setAttribute('aria-label',label);b.innerHTML='<span class="ic" aria-hidden="true"></span>';return b;};
+const autoplay=!(matchMedia('(prefers-reduced-motion: reduce)').matches||navigator.connection?.saveData)&&'IntersectionObserver' in window;
 const players=new Map();
 for(const box of document.querySelectorAll('.player')){
  const v=box.querySelector('video');
  if(!v)continue;
- const s={userPaused:false,ours:false}; players.set(v,s);
+ const s={userPaused:false,ours:false,box}; players.set(v,s);
  v.controls=false; box.classList.add('is-enhanced','is-muted');
+ // the big play button shows only while a video waits for the visitor: no autoplay, or paused by hand
+ if(!autoplay)box.classList.add('is-held');
  const big=control('big',say.play), play=control('play',say.play), sound=control('sound',say.soundOn), full=control('full',say.full);
  const bar=document.createElement('div'); bar.className='vbar'; bar.append(play,sound,full);
  const track=document.createElement('div'); track.className='vprogress'; track.setAttribute('aria-hidden','true');
@@ -33,14 +36,13 @@ for(const box of document.querySelectorAll('.player')){
  v.addEventListener('volumechange',()=>{box.classList.toggle('is-muted',v.muted);sound.setAttribute('aria-label',v.muted?say.soundOn:say.soundOff);});
  let frame=0;
  const progress=()=>{fill.style.transform=`scaleX(${v.duration?v.currentTime/v.duration:0})`;frame=requestAnimationFrame(progress);};
- v.addEventListener('play',()=>{s.userPaused=false;box.classList.add('is-playing');play.setAttribute('aria-label',say.pause);cancelAnimationFrame(frame);progress();});
- v.addEventListener('pause',()=>{if(!s.ours)s.userPaused=true;s.ours=false;box.classList.remove('is-playing');play.setAttribute('aria-label',say.play);cancelAnimationFrame(frame);});
+ v.addEventListener('play',()=>{s.userPaused=false;box.classList.remove('is-held');box.classList.add('is-playing');play.setAttribute('aria-label',say.pause);cancelAnimationFrame(frame);progress();});
+ v.addEventListener('pause',()=>{if(!s.ours){s.userPaused=true;box.classList.add('is-held');}s.ours=false;box.classList.remove('is-playing');play.setAttribute('aria-label',say.play);cancelAnimationFrame(frame);});
 }
-const quiet=matchMedia('(prefers-reduced-motion: reduce)').matches||navigator.connection?.saveData;
-if(!quiet&&'IntersectionObserver' in window){
+if(autoplay){
  const watcher=new IntersectionObserver(entries=>{for(const e of entries){
   const v=e.target, s=players.get(v);
-  if(e.isIntersecting){if(!s.userPaused)v.play().catch(()=>{});}
+  if(e.isIntersecting){if(!s.userPaused)v.play().catch(()=>s.box.classList.add('is-held'));}
   else if(!v.paused){s.ours=true;v.pause();}
  }},{threshold:.4});
  for(const v of players.keys())watcher.observe(v);
