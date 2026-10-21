@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://reinh2.github.io/sitemap.xml

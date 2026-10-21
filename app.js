@@ -13,10 +13,40 @@ for(const link of document.querySelectorAll('[data-zoom]'))link.addEventListener
  const source=link.querySelector('img');
  const image=viewer.querySelector('img');image.src=link.href;image.alt=source.alt;
  viewer.querySelector('.lightbox-caption').textContent=source.alt;
+ viewer.classList.toggle('is-portrait',source.naturalHeight>source.naturalWidth);
  viewer.showModal();
 });
 viewer?.addEventListener('click',e=>{if(e.target===viewer)viewer.close();});
 viewer?.addEventListener('close',()=>{opener?.focus();});
+// Before / after tabs. Without JS every panel stays visible one after another.
+for(const box of document.querySelectorAll('[data-compare]')){
+ const tabs=[...box.querySelectorAll('[role=tab]')];
+ const select=(tab,focus)=>{
+  for(const t of tabs){const on=t===tab;t.setAttribute('aria-selected',String(on));t.tabIndex=on?0:-1;document.getElementById(t.getAttribute('aria-controls')).hidden=!on;}
+  if(focus)tab.focus();
+ };
+ const reveal=tab=>tab.scrollIntoView({block:'nearest',inline:'nearest'});
+ tabs.forEach((tab,i)=>{
+  tab.addEventListener('click',()=>{select(tab);reveal(tab);});
+  tab.addEventListener('keydown',e=>{
+   const next={ArrowRight:i+1,ArrowLeft:i-1,Home:0,End:tabs.length-1}[e.key];
+   if(next===undefined)return;
+   e.preventDefault();const target=tabs[(next+tabs.length)%tabs.length];select(target,true);reveal(target);
+  });
+ });
+ select(tabs[0]);
+}
+// Case motion video: plays muted only while on screen; respects reduced motion and a manual pause.
+const motion=document.querySelector('.motion-video');
+if(motion && !window.matchMedia('(prefers-reduced-motion: reduce)').matches && 'IntersectionObserver' in window){
+ let userPaused=false, ours=false;
+ motion.addEventListener('pause',()=>{if(!ours)userPaused=true;ours=false;});
+ motion.addEventListener('play',()=>{userPaused=false;});
+ new IntersectionObserver(entries=>{for(const e of entries){
+  if(e.isIntersecting){if(!userPaused)motion.play().catch(()=>{});}
+  else if(!motion.paused){ours=true;motion.pause();}
+ }},{threshold:.4}).observe(motion);
+}
 // Keep the corresponding section when switching language. Real links work without JS.
 for(const link of document.querySelectorAll('.languages a'))link.addEventListener('click',()=>{link.hash=location.hash;});
 
