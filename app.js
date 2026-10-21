@@ -5,51 +5,45 @@ menu?.addEventListener('click',()=>{const open=nav.classList.toggle('open');menu
 nav?.addEventListener('click',e=>{if(e.target.closest('a'))closeMenu();});
 document.addEventListener('keydown',e=>{if(e.key==='Escape' && nav.classList.contains('open')){closeMenu();menu.focus();}});
 document.querySelector('.replay')?.addEventListener('click',()=>{const list=document.querySelector('.activity-list');const clone=list.cloneNode(true);list.replaceWith(clone);});
-const viewer=document.querySelector('.lightbox');
-let opener;
-for(const link of document.querySelectorAll('[data-zoom]'))link.addEventListener('click',event=>{
- if(!viewer?.showModal || event.ctrlKey || event.metaKey || event.shiftKey || event.altKey)return;
- event.preventDefault();opener=link;
- const source=link.querySelector('img');
- const image=viewer.querySelector('img');image.src=link.href;image.alt=source.alt;
- viewer.querySelector('.lightbox-caption').textContent=source.alt;
- viewer.classList.toggle('is-portrait',source.naturalHeight>source.naturalWidth);
- viewer.showModal();
-});
-viewer?.addEventListener('click',e=>{if(e.target===viewer)viewer.close();});
-viewer?.addEventListener('close',()=>{opener?.focus();});
-// Before / after tabs. Without JS every panel stays visible one after another.
-for(const box of document.querySelectorAll('[data-compare]')){
- const tabs=[...box.querySelectorAll('[role=tab]')];
- const select=(tab,focus)=>{
-  for(const t of tabs){const on=t===tab;t.setAttribute('aria-selected',String(on));t.tabIndex=on?0:-1;document.getElementById(t.getAttribute('aria-controls')).hidden=!on;}
-  if(focus)tab.focus();
- };
- const reveal=tab=>tab.scrollIntoView({block:'nearest',inline:'nearest'});
- tabs.forEach((tab,i)=>{
-  tab.addEventListener('click',()=>{select(tab);reveal(tab);});
-  tab.addEventListener('keydown',e=>{
-   const next={ArrowRight:i+1,ArrowLeft:i-1,Home:0,End:tabs.length-1}[e.key];
-   if(next===undefined)return;
-   e.preventDefault();const target=tabs[(next+tabs.length)%tabs.length];select(target,true);reveal(target);
-  });
- });
- select(tabs[0]);
+// Case videos get a small player of their own: the native bar sat on top of the REINH mark in every frame.
+// Without JS the native controls stay. A video plays muted while it is on screen, unless the visitor
+// prefers reduced motion, has data saver on, or paused it by hand.
+const say=document.documentElement.lang==='ru'
+ ?{play:'Воспроизвести',pause:'Пауза',soundOn:'Включить звук',soundOff:'Выключить звук',full:'Во весь экран'}
+ :{play:'Play',pause:'Pause',soundOn:'Turn sound on',soundOff:'Turn sound off',full:'Full screen'};
+const control=(kind,label)=>{const b=document.createElement('button');b.type='button';b.className='vbtn vbtn-'+kind;b.setAttribute('aria-label',label);b.innerHTML='<span class="ic" aria-hidden="true"></span>';return b;};
+const players=new Map();
+for(const box of document.querySelectorAll('.player')){
+ const v=box.querySelector('video');
+ if(!v)continue;
+ const s={userPaused:false,ours:false}; players.set(v,s);
+ v.controls=false; box.classList.add('is-enhanced','is-muted');
+ const big=control('big',say.play), play=control('play',say.play), sound=control('sound',say.soundOn), full=control('full',say.full);
+ const bar=document.createElement('div'); bar.className='vbar'; bar.append(play,sound,full);
+ const track=document.createElement('div'); track.className='vprogress'; track.setAttribute('aria-hidden','true');
+ const fill=document.createElement('i'); track.append(fill);
+ box.append(big,bar,track);
+ const toggle=()=>{if(v.paused)v.play().catch(()=>{});else v.pause();};
+ big.addEventListener('click',toggle); play.addEventListener('click',toggle);
+ v.addEventListener('click',()=>{if(!v.controls)toggle();});
+ sound.addEventListener('click',()=>{v.muted=!v.muted;if(!v.muted&&v.paused)v.play().catch(()=>{});});
+ full.addEventListener('click',()=>{if(v.requestFullscreen)v.requestFullscreen().catch(()=>{});else v.webkitEnterFullscreen?.();});
+ // inside full screen the native controls are the only way to seek
+ document.addEventListener('fullscreenchange',()=>{v.controls=document.fullscreenElement===v;});
+ v.addEventListener('volumechange',()=>{box.classList.toggle('is-muted',v.muted);sound.setAttribute('aria-label',v.muted?say.soundOn:say.soundOff);});
+ let frame=0;
+ const progress=()=>{fill.style.transform=`scaleX(${v.duration?v.currentTime/v.duration:0})`;frame=requestAnimationFrame(progress);};
+ v.addEventListener('play',()=>{s.userPaused=false;box.classList.add('is-playing');play.setAttribute('aria-label',say.pause);cancelAnimationFrame(frame);progress();});
+ v.addEventListener('pause',()=>{if(!s.ours)s.userPaused=true;s.ours=false;box.classList.remove('is-playing');play.setAttribute('aria-label',say.play);cancelAnimationFrame(frame);});
 }
-// Case motion videos: each plays muted only while on screen; respects reduced motion and a manual pause.
-if(!window.matchMedia('(prefers-reduced-motion: reduce)').matches && 'IntersectionObserver' in window){
- const state=new WeakMap();
+const quiet=matchMedia('(prefers-reduced-motion: reduce)').matches||navigator.connection?.saveData;
+if(!quiet&&'IntersectionObserver' in window){
  const watcher=new IntersectionObserver(entries=>{for(const e of entries){
-  const v=e.target, s=state.get(v);
+  const v=e.target, s=players.get(v);
   if(e.isIntersecting){if(!s.userPaused)v.play().catch(()=>{});}
   else if(!v.paused){s.ours=true;v.pause();}
  }},{threshold:.4});
- for(const v of document.querySelectorAll('.motion-video')){
-  const s={userPaused:false,ours:false}; state.set(v,s);
-  v.addEventListener('pause',()=>{if(!s.ours)s.userPaused=true;s.ours=false;});
-  v.addEventListener('play',()=>{s.userPaused=false;});
-  watcher.observe(v);
- }
+ for(const v of players.keys())watcher.observe(v);
 }
 // Keep the corresponding section when switching language. Real links work without JS.
 for(const link of document.querySelectorAll('.languages a'))link.addEventListener('click',()=>{link.hash=location.hash;});
