@@ -1,0 +1,91 @@
+/* v4: motion layer. Calm, transform/opacity only, REINH v1: no glow, no gradients, accent only on the checkpoint.
+   Everything here is gated by .motion-ok (set in <head> unless the visitor prefers reduced motion). */
+
+:root { --ease-out: cubic-bezier(.2,.7,.2,1); --ease-io: cubic-bezier(.65,0,.35,1); }
+.motion-ok { scroll-behavior: smooth; }
+
+/* ---------- Hero entrance (pure CSS, runs before any script) */
+@keyframes rise { from { opacity: 0; transform: translateY(22px); } to { opacity: 1; transform: none; } }
+@keyframes card-in { from { opacity: 0; transform: translateY(28px) scale(.985); } to { opacity: 1; transform: none; } }
+@keyframes tick-in { from { opacity: 0; transform: scale(.4); } to { opacity: 1; transform: none; } }
+.motion-ok .hero-signature { animation: rise .7s var(--ease-out) .05s both; }
+.motion-ok .hero h1 { animation: rise .8s var(--ease-out) .12s both; }
+.motion-ok .hero h1 span { display: inline-block; animation: rise .8s var(--ease-out) .26s both; }
+.motion-ok .hero-description { animation: rise .8s var(--ease-out) .34s both; }
+.motion-ok .hero-buttons { animation: rise .8s var(--ease-out) .44s both; }
+.motion-ok .hero-copy > .availability, .motion-ok .hero-meta { animation: rise .8s var(--ease-out) .54s both; }
+.motion-ok .activity { animation: card-in .9s var(--ease-out) .3s both; }
+.motion-ok .activity-list li { animation: stepIn .55s var(--ease-out) both; animation-delay: calc(.75s + var(--step) * .16s); }
+.motion-ok .activity-list .tick { display: inline-block; animation: tick-in .4s var(--ease-out) both; animation-delay: calc(.95s + var(--step) * .16s); }
+/* live availability: one soft ring, muted, slow */
+.availability > span { position: relative; }
+.motion-ok .availability > span::after { content: ''; position: absolute; inset: -4px; border-radius: 50%; border: 1px solid var(--muted); opacity: 0; animation: ring 2.8s var(--ease-out) 1.4s infinite; }
+@keyframes ring { 0% { transform: scale(.6); opacity: .7; } 70%,100% { transform: scale(1.8); opacity: 0; } }
+
+/* ---------- Header: compact on scroll, current-section underline, reading progress */
+header { transition: box-shadow .3s ease; }
+.header-inner { transition: height .3s var(--ease-out); }
+header.is-scrolled { box-shadow: 0 12px 32px #15181E0d; }
+@media (min-width: 901px) { header.is-scrolled .header-inner { height: 72px; } }
+.main-nav a { position: relative; }
+.main-nav a:hover { text-decoration: none; }
+.main-nav a::after { content: ''; position: absolute; left: 0; right: 0; bottom: 8px; height: 1.5px; background: var(--text); transform: scaleX(0); transform-origin: left; transition: transform .35s var(--ease-out); }
+.main-nav a:hover::after, .main-nav a.is-current::after { transform: scaleX(1); }
+.read-progress { position: absolute; left: 0; bottom: -1px; height: 2px; width: 100%; background: var(--text); transform: scaleX(0); transform-origin: left; pointer-events: none; opacity: .85; }
+@media (max-width: 900px) { .main-nav a::after { left: 10px; right: auto; width: 32px; bottom: 6px; } }
+
+/* ---------- Scroll reveal (classes added by animations.js only for elements below the fold) */
+.motion-ok [data-reveal] { opacity: 0; transform: translateY(18px); transition: opacity .75s var(--ease-out), transform .75s var(--ease-out); transition-delay: var(--d, 0s); }
+.motion-ok [data-reveal="media"] { transform: translateY(26px) scale(.985); clip-path: inset(6% 0 0 0 round 12px); transition: opacity .9s var(--ease-out), transform .9s var(--ease-out), clip-path 1.1s var(--ease-io); transition-delay: var(--d, 0s); }
+.motion-ok [data-reveal].is-in { opacity: 1; transform: none; clip-path: inset(0 0 0 0 round 12px); }
+
+/* gated by .anim-ready (added by animations.js), so without the script every line and step stays visible */
+/* lines that draw themselves: case header rule and the top rule of split cases */
+.motion-ok.anim-ready .case-header { position: relative; border-bottom-color: transparent; }
+.motion-ok.anim-ready .case-header::after { content: ''; position: absolute; left: 0; right: 0; bottom: -1px; height: 1px; background: var(--border); transform: scaleX(0); transform-origin: left; transition: transform 1.2s var(--ease-io) .1s; }
+.motion-ok.anim-ready .case-header.is-drawn::after { transform: none; }
+.motion-ok.anim-ready .split-case { position: relative; border-top-color: transparent; }
+.motion-ok.anim-ready .split-case::before { content: ''; position: absolute; left: 0; right: 0; top: -1px; height: 1px; background: var(--border); transform: scaleX(0); transform-origin: left; transition: transform 1.2s var(--ease-io) .1s; }
+.motion-ok.anim-ready .split-case.is-drawn::before { transform: none; }
+
+/* process lines: steps arrive one by one, connectors grow between them */
+.motion-ok.anim-ready .process-line li { opacity: 0; transform: translateY(8px); transition: opacity .5s var(--ease-out), transform .5s var(--ease-out); transition-delay: calc(var(--i, 0) * 90ms); }
+.motion-ok.anim-ready .process-line li::after { transform: scaleX(0); transform-origin: left; transition: transform .55s var(--ease-io); transition-delay: calc(var(--i, 0) * 90ms + 120ms); }
+.motion-ok.anim-ready .process-line.is-in li { opacity: 1; transform: none; }
+.motion-ok.anim-ready .process-line.is-in li::after { transform: none; }
+
+/* ---------- Services: rows respond to the pointer */
+.service-list h3 { transition: transform .35s var(--ease-out); }
+.service-list .service-number { transition: color .35s ease; }
+@media (hover: hover) {
+  .service-list article:hover h3 { transform: translateX(6px); }
+  .service-list article:hover .service-number { color: var(--text); }
+}
+
+/* ---------- "How we work": a line that fills while the list scrolls by */
+.process-list { position: relative; }
+.process-list::before, .process-list::after { content: ''; position: absolute; left: -24px; top: 0; bottom: 0; width: 1px; }
+.process-list::before { background: var(--border); }
+.motion-ok.anim-ready .process-list::after { background: var(--text); transform: scaleY(var(--p, 0)); transform-origin: top; }
+.process-list li .mono { transition: color .3s ease; }
+.motion-ok.anim-ready .process-list li:not(.is-passed) .mono { color: var(--muted); }
+@media (max-width: 600px) { .process-list::before, .process-list::after { left: -14px; } }
+
+/* ---------- Buttons and media */
+.button { transition: background .2s, color .2s, border-color .2s, transform .15s ease; }
+.button:active { transform: scale(.98); }
+.contact-mark img { will-change: transform; }
+
+/* ---------- Lightbox */
+@keyframes lb-in { from { opacity: 0; transform: translateY(12px) scale(.985); } to { opacity: 1; transform: none; } }
+@keyframes lb-fade { from { opacity: 0; } to { opacity: 1; } }
+.motion-ok .lightbox[open] { animation: lb-in .28s var(--ease-out); }
+.motion-ok .lightbox[open]::backdrop { animation: lb-fade .28s ease-out; }
+
+/* compare tabs (client case): panels cross-fade */
+.motion-ok .compare-panel:not([hidden]) { animation: rise .45s var(--ease-out); }
+.compare-tabs [role=tab] { transition: color .2s ease, border-color .25s ease; }
+
+@media (prefers-reduced-motion: reduce) {
+  .availability > span::after, .read-progress { display: none; }
+}
