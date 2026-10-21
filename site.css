@@ -251,6 +251,7 @@
   --muted:#616975;
   --border:#D8DDE5;
   --accent:#2457E7;
+  --available:#1E9E5A;
   --radius:12px
 }
 
@@ -1153,7 +1154,7 @@ footer img {
 .hero-signature { font-family: Inter,Arial,sans-serif; font-size: 13px; font-weight: 600; letter-spacing: .12em; color: var(--text); }
 .hero-description { max-width: 570px; margin-top: 28px; }
 .availability { display: flex; align-items: center; gap: 10px; margin-top: 28px; }
-.availability>span { width: 6px; height: 6px; border-radius: 50%; background: var(--muted); }
+.availability>span { width: 6px; height: 6px; border-radius: 50%; background: var(--available); }
 .activity { box-shadow: none; }
 .activity-top { padding-bottom: 20px; }
 .activity-top .eyebrow { font-size: 10px; }
@@ -1476,7 +1477,7 @@ a > .ic-out, a > .ic-go { margin-left: .3em; }
 
 /* live availability: one soft ring, muted, slow */
 .availability > span { position: relative; }
-.motion-ok .availability > span::after { content: ''; position: absolute; inset: -4px; border-radius: 50%; border: 1px solid var(--muted); opacity: 0; animation: ring 2.8s var(--ease-out) 1.4s infinite; }
+.motion-ok .availability > span::after { content: ''; position: absolute; inset: -4px; border-radius: 50%; border: 1px solid var(--available); opacity: 0; animation: ring 2.8s var(--ease-out) 1.4s infinite; }
 
 @keyframes ring { 0% { transform: scale(.6); opacity: .7; } 70%,100% { transform: scale(1.8); opacity: 0; } }
 
@@ -1552,7 +1553,7 @@ header.is-scrolled { box-shadow: 0 12px 32px #15181E0d; }
 .vbar { position: absolute; top: 12px; right: 12px; display: flex; gap: 6px; }
 .vbtn-big { position: absolute; left: 50%; top: 50%; width: 64px; height: 64px; margin: -32px 0 0 -32px; border-radius: 50%; }
 .vbtn-big .ic { width: 22px; height: 22px; margin-left: 3px; }
-.player.is-playing .vbtn-big { opacity: 0; visibility: hidden; }
+.player:not(.is-held) .vbtn-big, .player.is-playing .vbtn-big { opacity: 0; visibility: hidden; }
 .vprogress { position: absolute; left: 0; right: 0; bottom: 0; height: 3px; background: #F3F5F829; pointer-events: none; }
 .vprogress i { display: block; height: 100%; background: #F3F5F8cc; transform: scaleX(0); transform-origin: left; }
 .player:not(.is-playing) .vprogress { opacity: 0; }
@@ -1577,8 +1578,8 @@ header.is-scrolled { box-shadow: 0 12px 32px #15181E0d; }
   .main-nav .nav-cta:hover { background: var(--accent); text-decoration: none; }
 }
 
-/* Phones: a case video follows its heading instead of trailing after all the text */
-@media (max-width: 600px) {
+/* Phones and tablets: a case video follows its heading instead of sitting beside or after all the text */
+@media (max-width: 900px) {
   .split-case { display: flex; flex-direction: column; align-items: stretch; gap: 0; }
   .split-copy { display: contents; }
   .split-copy > * { order: 2; }
@@ -1595,4 +1596,11 @@ header.is-scrolled { box-shadow: 0 12px 32px #15181E0d; }
 .contact-social .text-link .lbl { color: inherit; }
 @media (max-width: 600px) {
   .contact-social { gap: 0 24px; margin-top: 8px; }
+}
+
+/* Tablets: the stacked case is full width, so its steps sit on one line like the Lead Pipeline ones */
+@media (min-width: 601px) and (max-width: 900px) {
+  .split-copy > p { max-width: 640px; }
+  .split-copy .process-line { flex-direction: row; flex-wrap: nowrap; align-items: baseline; gap: 0; }
+  .split-copy .process-line li:not(:last-child):after { content: ''; display: block; flex: 1; min-width: 12px; height: 1px; background: var(--border); margin: 0 12px; }
 }
