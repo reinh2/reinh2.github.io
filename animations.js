@@ -53,7 +53,7 @@
  const groups = [
   ['.featured-case .case-story > *', 'up'], ['.split-copy > :not(.process-line)', 'up'], ['.lead-proof', 'up'], ['.case-status', 'up'],
   ['.lead-media', 'media'], ['.case-motion', 'media'], ['.compare', 'media'], ['.video-label', 'up'], ['.client-points > div', 'up'],
-  ['.service-list article', 'up'], ['.about-facts > div', 'up'], ['.process-list li', 'up'], ['.contact-copy > *', 'up'], ['.proof-strip', 'up'],
+  ['.service-list article', 'up'], ['.about-facts > div', 'up'], ['.process-list li', 'up'], ['.contact-copy > *', 'up'], ['.proof-strip', 'up'], ['.more-demos-head', 'up'], ['.demo-card', 'up'],
  ];
  const io = new IntersectionObserver(entries => {
   for (const e of entries) if (e.isIntersecting) { e.target.classList.add('is-in'); io.unobserve(e.target); }
