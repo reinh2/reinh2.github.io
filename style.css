@@ -67,9 +67,10 @@ p,li,dd,small{text-wrap:pretty}
 /* ---------- header ---------- */
 .top{position:sticky;top:0;z-index:30;background:rgba(243,245,249,.86);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);border-bottom:1px solid rgba(17,19,24,.05)}
 .top-in{max-width:var(--wrap);min-height:var(--head);margin:0 auto;padding-inline:var(--gut);display:flex;align-items:center;gap:20px;position:relative}
-/* brand: copied from reinh-links (work/reinh-links/public/style.css) — mark 36×32, gap 11, 27 px / 800 / −1.6 px */
-.wordmark{display:inline-flex;align-items:center;gap:11px;flex:none;font-family:-apple-system,BlinkMacSystemFont,"SF Pro Text","Segoe UI",sans-serif;font-size:27px;font-weight:800;letter-spacing:-1.6px;line-height:1;color:var(--ink);text-decoration:none;border-radius:8px}
-.wordmark img{display:block;width:36px;height:32px;flex:none}
+/* brand «Reinh.»: the original R mark stands in for the capital R (owner, 01.11.2026); type from reinh-links —
+   system font, 27 px / 800 / −1.6 px, dot #5B8CFF. The mark is sized to the cap height and sits on the baseline. */
+.wordmark{display:inline-flex;align-items:baseline;flex:none;font-family:-apple-system,BlinkMacSystemFont,"SF Pro Text","Segoe UI",sans-serif;font-size:27px;font-weight:800;letter-spacing:-1.6px;line-height:1;color:var(--ink);text-decoration:none;border-radius:8px}
+.wordmark img{display:block;width:auto;height:.77em;margin:0 .01em -.03em 0;flex:none}
 .brand-dot{color:#5B8CFF}
 .nav{display:flex;gap:4px;margin-left:auto}
 .nav a{padding:8px 14px;border-radius:99px;white-space:nowrap;text-decoration:none;font-weight:600;font-size:15px;color:var(--text);transition:background .2s,color .2s}
@@ -307,8 +308,7 @@ p,li,dd,small{text-wrap:pretty}
   .steps span{margin-top:0}
 }
 @media (max-width:680px){
-  .wordmark{font-size:25px;gap:9px}
-  .wordmark img{width:32px;height:29px}
+  .wordmark{font-size:25px}
 }
 @media (max-width:600px){
   .gain-list{grid-template-columns:1fr}
