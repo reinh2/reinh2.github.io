@@ -3,6 +3,11 @@
 // every before/after pair, and the snapshots open as plain image links.
 const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
 const root = document.documentElement;
+// interface strings by page language (<html lang>): Russian at /, English at /en/
+const T = {
+  ru: { menuOpen: 'Открыть меню', menuClose: 'Закрыть меню', zoom: 'Открыть крупно. ', retry: 'Повторить', again: 'Посмотреть ещё раз', blocked: 'Браузер не разрешил запуск. Нажмите ещё раз.', failed: 'Видео не удалось запустить.', network: 'Видео не загрузилось. Проверьте соединение и повторите.' },
+  en: { menuOpen: 'Open menu', menuClose: 'Close menu', zoom: 'Open full size. ', retry: 'Try again', again: 'Watch again', blocked: 'The browser blocked playback. Press again.', failed: 'The video could not start.', network: 'The video did not load. Check the connection and try again.' },
+}[root.lang === 'en' ? 'en' : 'ru'];
 
 // ---------- header height → anchor offset (scroll-padding-top uses --head-h) ----------
 const bar = document.querySelector('.top');
@@ -18,7 +23,7 @@ if (menuBtn && nav) {
   const isOpen = () => menuBtn.getAttribute('aria-expanded') === 'true';
   const setOpen = (open, { focus } = {}) => {
     menuBtn.setAttribute('aria-expanded', String(open));
-    menuBtn.setAttribute('aria-label', open ? 'Закрыть меню' : 'Открыть меню');
+    menuBtn.setAttribute('aria-label', open ? T.menuClose : T.menuOpen);
     nav.classList.toggle('open', open);
     if (open && focus) nav.querySelector('a')?.focus();
     if (!open && focus) menuBtn.focus();
@@ -80,7 +85,7 @@ if (viewer?.showModal) {
   let opener = null;
   for (const link of document.querySelectorAll('[data-zoom]')) {
     const thumb = link.querySelector('img');
-    link.setAttribute('aria-label', 'Открыть крупно. ' + thumb.alt);
+    link.setAttribute('aria-label', T.zoom + thumb.alt);
     link.addEventListener('click', (e) => {
       if (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return; // new tab / window still works
       e.preventDefault();
@@ -116,7 +121,7 @@ for (const box of players) {
     box.classList.add('failed');
     v.controls = false;
     msg.textContent = text;
-    label.textContent = 'Повторить';
+    label.textContent = T.retry;
     b.hidden = false;
   };
   const start = () => {
@@ -130,7 +135,7 @@ for (const box of players) {
     const p = v.play();
     if (p) p.catch((err) => {
       if (err && err.name === 'AbortError') return; // interrupted by another play/pause, not an error
-      fail(err && err.name === 'NotAllowedError' ? 'Браузер не разрешил запуск. Нажмите ещё раз.' : 'Видео не удалось запустить.');
+      fail(err && err.name === 'NotAllowedError' ? T.blocked : T.failed);
     });
   };
   b.addEventListener('click', start);
@@ -138,12 +143,12 @@ for (const box of players) {
     for (const other of document.querySelectorAll('[data-player] video')) if (other !== v) other.pause();
   });
   // network or decode error: on the <video> itself, or on the last <source> when none could be loaded
-  v.addEventListener('error', () => fail('Видео не загрузилось. Проверьте соединение и повторите.'));
-  v.querySelector('source:last-of-type')?.addEventListener('error', () => fail('Видео не загрузилось. Проверьте соединение и повторите.'));
+  v.addEventListener('error', () => fail(T.network));
+  v.querySelector('source:last-of-type')?.addEventListener('error', () => fail(T.network));
   v.addEventListener('ended', () => {
     box.classList.remove('playing');
     v.controls = false;
-    label.textContent = 'Посмотреть ещё раз';
+    label.textContent = T.again;
     v.load(); // back to the poster
     b.focus({ preventScroll: true });
   });
