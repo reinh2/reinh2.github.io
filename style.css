@@ -157,6 +157,8 @@ p,li,dd,small{text-wrap:pretty}
 .pair-title{font-size:20px;font-weight:750;margin-bottom:16px}
 .js .pair-title{display:none}
 .pair-view{display:grid;grid-template-columns:1fr 1fr;gap:clamp(14px,2vw,28px);margin-top:12px}
+.pair-view.single{grid-template-columns:1fr}
+.phones .pair-view.single .shot{width:100%;max-width:300px;margin-inline:auto}
 .shot{margin:0;display:flex;flex-direction:column;gap:12px;min-width:0}
 .shot .frame{cursor:zoom-in;transition:transform .25s var(--out),box-shadow .25s}
 .shot .frame:hover{transform:translateY(-2px);box-shadow:var(--shadow-up),0 0 0 1px var(--line)}
